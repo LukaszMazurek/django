@@ -6,7 +6,8 @@ from django.contrib.auth.models import User
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status='published')
+        return super(PublishedManager,
+                     self).get_queryset().filter(status='published')
 
 
 class Post(models.Model):
@@ -28,8 +29,8 @@ class Post(models.Model):
                               choices=STATUS_CHOICES,
                               default='draft')
 
-    objects = models.Manager() # The default manager.
-    published = PublishedManager() # Our custom manager.
+    objects = models.Manager()  # The default manager.
+    published = PublishedManager()  # Our custom manager.
 
     class Meta:
         ordering = ('-publish',)
@@ -40,5 +41,6 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('blog:post_detail',
                        args=[self.publish.year,
-                             self.publish.month,
-                             self.publish.day, self.slug])
+                             self.publish.strftime('%m'),
+                             self.publish.strftime('%d'),
+                             self.slug])
